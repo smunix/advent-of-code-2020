@@ -1,14 +1,14 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.34.1.
+-- This file has been generated from package.yaml by hpack version 0.34.2.
 --
 -- see: https://github.com/sol/hpack
 
-name:           utils
+name:           day1
 version:        0.1.0.0
-description:    Please see the README on Github at <https://github.com/smunix/utils#readme>
-homepage:       https://github.com/smunix/utils#readme
-bug-reports:    https://github.com/smunix/utils/issues
+description:    Please see the README on Github at <https://github.com/smunix/day1#readme>
+homepage:       https://github.com/smunix/day1#readme
+bug-reports:    https://github.com/smunix/day1/issues
 author:         Providence Salumu
 maintainer:     Providence.Salumu@smunix.com
 copyright:      BSD3
@@ -21,7 +21,7 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/smunix/utils
+  location: https://github.com/smunix/day1
 
 library
   exposed-modules:
@@ -30,44 +30,41 @@ library
       Types
       Util
   other-modules:
-      Paths_utils
+      Paths_day1
   hs-source-dirs:
       src
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints
   build-depends:
-      base >=4.11
+      base >=4.11 && <10
     , rio >=0.1.12.0
-    , template-haskell
   default-language: Haskell2010
 
-executable utils-exe
+executable day1-exe
   main-is: Main.hs
   other-modules:
-      Paths_utils
+      Paths_day1
   hs-source-dirs:
       app
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.11
+      base >=4.11 && <10
+    , day1
     , optparse-simple
     , rio >=0.1.12.0
-    , template-haskell
-    , utils
   default-language: Haskell2010
 
-test-suite utils-test
+test-suite day1-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
       UtilSpec
-      Paths_utils
+      Paths_day1
   hs-source-dirs:
       test
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.11
+      base >=4.11 && <10
+    , day1
     , hspec
     , rio >=0.1.12.0
-    , template-haskell
-    , utils
   default-language: Haskell2010

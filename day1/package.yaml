@@ -1,6 +1,6 @@
-name:                utils
+name:                day1
 version:             0.1.0.0
-github:              smunix/utils
+github:              smunix/day1
 license:             BSD3
 author:              Providence Salumu
 maintainer:          Providence.Salumu@smunix.com
@@ -17,12 +17,11 @@ extra-source-files:
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description:         Please see the README on Github at <https://github.com/smunix/utils#readme>
+description:         Please see the README on Github at <https://github.com/smunix/day1#readme>
 
 dependencies:
-- base >= 4.11
+- base >= 4.11 && < 10
 - rio >= 0.1.12.0
-- template-haskell
 
 ghc-options:
 - -Wall
@@ -37,11 +36,11 @@ library:
   source-dirs: src
 
 executables:
-  utils-exe:
+  day1-exe:
     main:                Main.hs
     source-dirs:         app
     dependencies:
-    - utils
+    - day1
     - optparse-simple
 
     ghc-options:
@@ -50,11 +49,11 @@ executables:
     - -with-rtsopts=-N
 
 tests:
-  utils-test:
+  day1-test:
     main:                Spec.hs
     source-dirs:         test
     dependencies:
-    - utils
+    - day1
     - hspec
 
     ghc-options:
