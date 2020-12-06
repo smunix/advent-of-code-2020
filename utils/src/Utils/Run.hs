@@ -1,8 +1,9 @@
-{-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
-module Run (run) where
+{-# LANGUAGE NoImplicitPrelude #-}
 
-import Import
+module Utils.Run (run) where
+
+import Utils.Import
 
 run :: RIO App ()
 run = do

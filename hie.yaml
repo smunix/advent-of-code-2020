@@ -12,6 +12,18 @@ cradle:
     - path: "d1/test"
       component: "d1:test:d1-test"
 
+    - path: "day1/src"
+      component: "lib:day1"
+
+    - path: "day1/app/Main.hs"
+      component: "day1:exe:day1-exe"
+
+    - path: "day1/app/Paths_day1.hs"
+      component: "day1:exe:day1-exe"
+
+    - path: "day1/test"
+      component: "day1:test:day1-test"
+
     - path: "utils/src"
       component: "lib:utils"
 

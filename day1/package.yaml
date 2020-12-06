@@ -20,8 +20,9 @@ extra-source-files:
 description:         Please see the README on Github at <https://github.com/smunix/day1#readme>
 
 dependencies:
-- base >= 4.11 && < 10
+- base >= 4.11
 - rio >= 0.1.12.0
+- array
 
 ghc-options:
 - -Wall

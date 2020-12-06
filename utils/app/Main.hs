@@ -4,11 +4,11 @@
 
 module Main (main) where
 
-import Import
 import Options.Applicative.Simple
 import qualified Paths_utils
 import RIO.Process
-import Run
+import Utils.Import
+import Utils.Run
 
 main :: IO ()
 main = do

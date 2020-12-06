@@ -1,10 +1,10 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 
-module Import
+module Utils.Import
   ( module RIO,
-    module Types,
+    module Utils.Types,
   )
 where
 
 import RIO
-import Types
+import Utils.Types

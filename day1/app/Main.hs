@@ -2,8 +2,8 @@
 {-# LANGUAGE TemplateHaskell #-}
 module Main (main) where
 
-import Import
-import Run
+import Day1.Import
+import Day1.Run
 import RIO.Process
 import Options.Applicative.Simple
 import qualified Paths_day1

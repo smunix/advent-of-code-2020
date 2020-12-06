@@ -25,10 +25,10 @@ source-repository head
 
 library
   exposed-modules:
-      Import
-      Run
-      Types
-      Util
+      Utils.Import
+      Utils.Run
+      Utils.Types
+      Utils.Util
   other-modules:
       Paths_utils
   hs-source-dirs:
@@ -36,6 +36,8 @@ library
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints
   build-depends:
       base >=4.11
+    , day1
+    , monad-extras
     , rio >=0.1.12.0
     , template-haskell
   default-language: Haskell2010
@@ -49,6 +51,7 @@ executable utils-exe
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.11
+    , monad-extras
     , optparse-simple
     , rio >=0.1.12.0
     , template-haskell
@@ -67,6 +70,7 @@ test-suite utils-test
   build-depends:
       base >=4.11
     , hspec
+    , monad-extras
     , rio >=0.1.12.0
     , template-haskell
     , utils
