@@ -5,12 +5,10 @@
 module Main (main) where
 
 import Import
-import Language.Haskell.TH.Syntax (liftString)
 import Options.Applicative.Simple
 import qualified Paths_utils
 import RIO.Process
 import Run
-import System.Environment (getEnv)
 
 main :: IO ()
 main = do
