@@ -1,0 +1,25 @@
+cradle:
+  cabal:
+    - path: "d1/src"
+      component: "lib:d1"
+
+    - path: "d1/app/Main.hs"
+      component: "d1:exe:d1-exe"
+
+    - path: "d1/app/Paths_d1.hs"
+      component: "d1:exe:d1-exe"
+
+    - path: "d1/test"
+      component: "d1:test:d1-test"
+
+    - path: "utils/src"
+      component: "lib:utils"
+
+    - path: "utils/app/Main.hs"
+      component: "utils:exe:utils-exe"
+
+    - path: "utils/app/Paths_utils.hs"
+      component: "utils:exe:utils-exe"
+
+    - path: "utils/test"
+      component: "utils:test:utils-test"
