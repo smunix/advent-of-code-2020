@@ -8,12 +8,20 @@
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 
-module Day1.Run (run, refine) where
+module Day1.Run
+  ( run,
+    part1,
+    part2,
+  )
+where
 
+import Control.Monad.Extra (io)
 import Day1.Import
+import RIO.List (nub)
 import RIO.List.Partial (head)
 import RIO.Partial (read)
 import System.IO (hGetContents, print)
+import Utils.Import (search)
 
 {- https://adventofcode.com/2020/day/1 -}
 
@@ -65,30 +73,22 @@ test2 =
   ]
 
 part1 :: Int -> [] Int -> (Int, Int)
-part1 total xs0 = search finished refine' partial & head
+part1 total xs0 = search finished' refine' partial' & head
   where
-    partial = (xs0, (0, 0))
-    finished (_, (a, b))
+    partial' = (xs0, (0, 0))
+    finished' (_, (a, b))
       | a + b == total = Just (a, b)
       | otherwise = Nothing
     refine' ([], (_, _)) = mempty
     refine' (x : xs, (_, _)) = xs <&> \y -> (xs, (x, y))
 
-search ::
-  forall partial solution.
-  (partial -> Maybe solution) ->
-  (partial -> [] partial) ->
-  partial ->
-  [] solution
-search finished' refine' = search'
-  where
-    search' partial
-      | Just sln <- finished' partial = pure sln
-      | otherwise = refine' partial <&> search' & join
+part1'' :: Int -> [] Int -> Int
+part1'' total xs0 = [x | x <- xs0, y <- xs0, total == x + y] & nub & product
 
 {-
 --- Part Two ---
-The Elves in accounting are thankful for your help; one of them even offers you a starfish coin they had left over from a past vacation. They offer you a second one if you can find three numbers in your expense report that meet the same criteria.
+The Elves in accounting are thankful for your help; one of them even offers you a starfish coin they had left over from a past vacation.
+They offer you a second one if you can find three numbers in your expense report that meet the same criteria.
 
 Using the above example again, the three entries that sum to 2020 are 979, 366, and 675. Multiplying them together produces the answer, 241861950.
 
@@ -98,37 +98,46 @@ Your puzzle answer was 223162626.
 
 -}
 
-part2 :: Int -> [] Int -> (Int, Int, Int)
-part2 total xs0 = search finished refine partial & head
+part2' :: Int -> [] Int -> (Int, Int, Int)
+part2' total xs0 = search finished' refine' partial' & head
   where
-    partial = (xs0, (0, 0, 0))
-    finished (_, (a, b, c))
+    partial' = (xs0, (0, 0, 0))
+    finished' (_, (a, b, c))
       | a + b + c == total = Just (a, b, c)
       | otherwise = Nothing
+    refine' :: ([] Int, (Int, Int, Int)) -> [] ([] Int, (Int, Int, Int))
+    refine' partial =
+      if
+          | ([], (_, _, _)) <- partial -> mempty
+          | ([_, _], (_, _, _)) <- partial -> mempty
+          | ([x, y, z], (_, _, _)) <- partial -> pure (mempty, (x, y, z))
+          | (x : xs, (_, _, _)) <- partial -> ((,) <$> xs <*> xs <&> \(y, z) -> (xs, (x, y, z))) & nub
 
-refine :: ([] Int, (Int, Int, Int)) -> [] ([] Int, (Int, Int, Int))
-refine partial =
-  if
-      | ([], (_, _, _)) <- partial -> mempty
-      | ([_, _], (_, _, _)) <- partial -> mempty
-      | ([x, y, z], (_, _, _)) <- partial -> pure (mempty, (x, y, z))
-      | (x : xs, (_, _, _)) <- partial ->
-        do
-          y <- xs
-          z <- xs
-          pure (xs, (x, y, z))
+part2 :: Int -> [] Int -> (Int, Int, Int)
+part2 total = head . triplet
+  where
+    triplet xs =
+      if
+          | [] <- xs -> mempty
+          | [_, _] <- xs -> mempty
+          | [x, y, z] <- xs -> pure (x, y, z)
+          | x : ys <- xs -> do
+            let yz = do
+                  y <- ys
+                  z <- ys
+                  pure (y, z)
+            ((yz & nub <&> \(y, z) -> guard (total == x + y + z) >> pure (x, y, z)) & join & nub) <> triplet ys
+
+part2'' :: Int -> [] Int -> Int
+part2'' total xs0 = (\x y z -> guard (total == x + y + z) >> pure x) <$> xs0 <*> xs0 <*> xs0 & join & nub & product
 
 run :: RIO App ()
 run = do
   logInfo "We're inside the application!"
-  logInfo $ fromString $ show $ part1 2020 test1
-  logInfo $ fromString $ show $ part1 1041 test2
-  -- logInfo $ fromString $ show $ part2 2020 test1
-  let refineT = [1, 2, 3]
-  logInfo $ fromString $ show $ refine (refineT, (0, 0, 0)) & (refineT,)
-  liftIO $ withFile "day1/assets/inputs.txt" ReadMode \h -> do
-    contents <- hGetContents h
-    contents
-      & words
-      <&> read @Int
-      & const (print ())
+  logInfo $ fromString $ show $ part1'' 2020 test1
+  logInfo $ fromString $ show $ part2'' 2020 test1
+  io do
+    withFile "day1/assets/inputs.txt" ReadMode \h -> do
+      contents <- hGetContents h
+      let ints = contents & words <&> (read @Int)
+      part2'' 2020 ints & print

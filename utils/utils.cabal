@@ -36,7 +36,6 @@ library
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints
   build-depends:
       base >=4.11
-    , day1
     , monad-extras
     , rio >=0.1.12.0
     , template-haskell

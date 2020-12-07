@@ -37,7 +37,9 @@ library
   build-depends:
       array
     , base >=4.11
+    , monad-extras
     , rio >=0.1.12.0
+    , utils
   default-language: Haskell2010
 
 executable day1-exe
@@ -51,8 +53,10 @@ executable day1-exe
       array
     , base >=4.11
     , day1
+    , monad-extras
     , optparse-simple
     , rio >=0.1.12.0
+    , utils
   default-language: Haskell2010
 
 test-suite day1-test
@@ -69,5 +73,7 @@ test-suite day1-test
     , base >=4.11
     , day1
     , hspec
+    , monad-extras
     , rio >=0.1.12.0
+    , utils
   default-language: Haskell2010
