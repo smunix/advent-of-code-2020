@@ -1,6 +1,6 @@
-name:                d1
+name:                d1b
 version:             0.1.0.0
-github:              smunix/d1
+github:              smunix/d1b
 license:             BSD3
 author:              Providence Salumu
 maintainer:          Providence.Salumu@smunix.com
@@ -17,7 +17,7 @@ extra-source-files:
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description:         Please see the README on Github at <https://github.com/smunix/d1#readme>
+description:         Please see the README on Github at <https://github.com/smunix/d1b#readme>
 
 dependencies:
 - base >= 4.11 && < 10
@@ -36,11 +36,11 @@ library:
   source-dirs: src
 
 executables:
-  d1-exe:
+  d1b-exe:
     main:                Main.hs
     source-dirs:         app
     dependencies:
-    - d1
+    - d1b
     - optparse-simple
 
     ghc-options:
@@ -49,11 +49,11 @@ executables:
     - -with-rtsopts=-N
 
 tests:
-  d1-test:
+  d1b-test:
     main:                Spec.hs
     source-dirs:         test
     dependencies:
-    - d1
+    - d1b
     - hspec
 
     ghc-options:

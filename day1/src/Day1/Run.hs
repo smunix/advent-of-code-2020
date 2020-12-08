@@ -18,6 +18,7 @@ where
 import Control.Monad.Extra (io)
 import Day1.Import
 import RIO.List (nub)
+import qualified RIO.List as L
 import RIO.List.Partial (head)
 import RIO.Partial (read)
 import System.IO (hGetContents, print)
@@ -85,6 +86,13 @@ part1 total xs0 = search finished' refine' partial' & head
 part1'' :: Int -> [] Int -> Int
 part1'' total xs0 = [x | x <- xs0, y <- xs0, total == x + y] & nub & product
 
+solve :: [] Int -> [] Int
+solve xs = do
+  x : ys <- L.tails xs
+  y <- ys
+  guard $ 2020 == x + y
+  pure $ x * y
+
 {-
 --- Part Two ---
 The Elves in accounting are thankful for your help; one of them even offers you a starfish coin they had left over from a past vacation.
@@ -134,8 +142,7 @@ part2'' total xs0 = (\x y z -> guard (total == x + y + z) >> pure x) <$> xs0 <*>
 run :: RIO App ()
 run = do
   logInfo "We're inside the application!"
-  logInfo $ fromString $ show $ part1'' 2020 test1
-  logInfo $ fromString $ show $ part2'' 2020 test1
+  logInfo $ fromString $ show $ solve test1
   io do
     withFile "day1/assets/inputs.txt" ReadMode \h -> do
       contents <- hGetContents h

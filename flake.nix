@@ -5,7 +5,7 @@
         inherit (self.packages.x86_64-linux) utils;
       };
       utils = haskellPackages.callCabal2nix "utils" ./utils {};
-      d1 = haskellPackages.callPackage ./d1/d1.nix {
+      d1b = haskellPackages.callPackage ./d1b/d1b.nix {
         version = ''${self.rev or self.lastModifiedDate}'';
       };
     };
