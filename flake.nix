@@ -1,7 +1,11 @@
 {
   outputs = { self, nixpkgs }: {
     packages.x86_64-linux = with nixpkgs.legacyPackages.x86_64-linux.pkgs; {
+      bytestring = haskellPackages.callHackage "bytestring" "0.11.0.0" {};
       D1 = haskellPackages.callCabal2nix "D1" ./D1 {
+        inherit (self.packages.x86_64-linux) utils;
+      };
+      D2 = haskellPackages.callCabal2nix "D2" ./D2 {
         inherit (self.packages.x86_64-linux) utils;
       };
       utils = haskellPackages.callCabal2nix "utils" ./utils {};

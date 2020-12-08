@@ -12,6 +12,18 @@ cradle:
     - path: "D1/test"
       component: "D1:test:D1-test"
 
+    - path: "D2/src"
+      component: "lib:D2"
+
+    - path: "D2/app/Main.hs"
+      component: "D2:exe:D2-exe"
+
+    - path: "D2/app/Paths_D2.hs"
+      component: "D2:exe:D2-exe"
+
+    - path: "D2/test"
+      component: "D2:test:D2-test"
+
     - path: "d1b/src"
       component: "lib:d1b"
 
