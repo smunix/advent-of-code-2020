@@ -25,6 +25,7 @@ dependencies:
 - array
 - utils
 - monad-extras
+- bytestring
 
 ghc-options:
 - -Wall

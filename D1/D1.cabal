@@ -37,6 +37,7 @@ library
   build-depends:
       array
     , base >=4.11
+    , bytestring
     , monad-extras
     , rio >=0.1.12.0
     , utils
@@ -53,6 +54,7 @@ executable D1-exe
       D1
     , array
     , base >=4.11
+    , bytestring
     , monad-extras
     , optparse-simple
     , rio >=0.1.12.0
@@ -72,6 +74,7 @@ test-suite D1-test
       D1
     , array
     , base >=4.11
+    , bytestring
     , hspec
     , monad-extras
     , rio >=0.1.12.0
