@@ -1,3 +1,3 @@
-# Changelog for day1
+# Changelog for D1
 
 ## Unreleased changes

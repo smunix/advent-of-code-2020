@@ -1,28 +1,28 @@
 cradle:
   cabal:
-    - path: "d1/src"
-      component: "lib:d1"
+    - path: "D1/src"
+      component: "lib:D1"
 
-    - path: "d1/app/Main.hs"
-      component: "d1:exe:d1-exe"
+    - path: "D1/app/Main.hs"
+      component: "D1:exe:D1-exe"
 
-    - path: "d1/app/Paths_d1.hs"
-      component: "d1:exe:d1-exe"
+    - path: "D1/app/Paths_D1.hs"
+      component: "D1:exe:D1-exe"
 
-    - path: "d1/test"
-      component: "d1:test:d1-test"
+    - path: "D1/test"
+      component: "D1:test:D1-test"
 
-    - path: "day1/src"
-      component: "lib:day1"
+    - path: "d1b/src"
+      component: "lib:d1b"
 
-    - path: "day1/app/Main.hs"
-      component: "day1:exe:day1-exe"
+    - path: "d1b/app/Main.hs"
+      component: "d1b:exe:d1b-exe"
 
-    - path: "day1/app/Paths_day1.hs"
-      component: "day1:exe:day1-exe"
+    - path: "d1b/app/Paths_d1b.hs"
+      component: "d1b:exe:d1b-exe"
 
-    - path: "day1/test"
-      component: "day1:test:day1-test"
+    - path: "d1b/test"
+      component: "d1b:test:d1b-test"
 
     - path: "utils/src"
       component: "lib:utils"

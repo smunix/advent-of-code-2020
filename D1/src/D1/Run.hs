@@ -8,7 +8,7 @@
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 
-module Day1.Run
+module D1.Run
   ( run,
     part1,
     part2,
@@ -16,7 +16,7 @@ module Day1.Run
 where
 
 import Control.Monad.Extra (io)
-import Day1.Import
+import D1.Import
 import RIO.List (nub)
 import qualified RIO.List as L
 import RIO.List.Partial (head)
@@ -144,7 +144,7 @@ run = do
   logInfo "We're inside the application!"
   logInfo $ fromString $ show $ solve test1
   io do
-    withFile "day1/assets/inputs.txt" ReadMode \h -> do
+    withFile "D1/assets/inputs.txt" ReadMode \h -> do
       contents <- hGetContents h
       let ints = contents & words <&> (read @Int)
       part2'' 2020 ints & print

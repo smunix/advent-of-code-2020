@@ -1,8 +1,8 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 module UtilSpec (spec) where
 
-import Day1.Import
-import Day1.Util
+import D1.Import
+import D1.Util
 import Test.Hspec
 import Test.Hspec.QuickCheck
 

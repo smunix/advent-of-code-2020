@@ -4,11 +4,11 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 
-name:           day1
+name:           D1
 version:        0.1.0.0
-description:    Please see the README on Github at <https://github.com/smunix/day1#readme>
-homepage:       https://github.com/smunix/day1#readme
-bug-reports:    https://github.com/smunix/day1/issues
+description:    Please see the README on Github at <https://github.com/smunix/D1#readme>
+homepage:       https://github.com/smunix/D1#readme
+bug-reports:    https://github.com/smunix/D1/issues
 author:         Providence Salumu
 maintainer:     Providence.Salumu@smunix.com
 copyright:      BSD3
@@ -21,16 +21,16 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/smunix/day1
+  location: https://github.com/smunix/D1
 
 library
   exposed-modules:
-      Day1.Import
-      Day1.Run
-      Day1.Types
-      Day1.Util
+      D1.Import
+      D1.Run
+      D1.Types
+      D1.Util
   other-modules:
-      Paths_day1
+      Paths_D1
   hs-source-dirs:
       src
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints
@@ -42,36 +42,36 @@ library
     , utils
   default-language: Haskell2010
 
-executable day1-exe
+executable D1-exe
   main-is: Main.hs
   other-modules:
-      Paths_day1
+      Paths_D1
   hs-source-dirs:
       app
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      array
+      D1
+    , array
     , base >=4.11
-    , day1
     , monad-extras
     , optparse-simple
     , rio >=0.1.12.0
     , utils
   default-language: Haskell2010
 
-test-suite day1-test
+test-suite D1-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
       UtilSpec
-      Paths_day1
+      Paths_D1
   hs-source-dirs:
       test
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      array
+      D1
+    , array
     , base >=4.11
-    , day1
     , hspec
     , monad-extras
     , rio >=0.1.12.0

@@ -1,6 +1,6 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 
-module Day1.Types where
+module D1.Types where
 
 import RIO
 import RIO.Process

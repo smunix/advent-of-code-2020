@@ -1,10 +1,10 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 
-module Day1.Import
+module D1.Import
   ( module RIO,
-    module Day1.Types,
+    module D1.Types,
   )
 where
 
-import Day1.Types
+import D1.Types
 import RIO

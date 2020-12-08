@@ -1,6 +1,6 @@
-name:                day1
+name:                D1
 version:             0.1.0.0
-github:              smunix/day1
+github:              smunix/D1
 license:             BSD3
 author:              Providence Salumu
 maintainer:          Providence.Salumu@smunix.com
@@ -17,7 +17,7 @@ extra-source-files:
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description:         Please see the README on Github at <https://github.com/smunix/day1#readme>
+description:         Please see the README on Github at <https://github.com/smunix/D1#readme>
 
 dependencies:
 - base >= 4.11
@@ -39,11 +39,11 @@ library:
   source-dirs: src
 
 executables:
-  day1-exe:
+  D1-exe:
     main:                Main.hs
     source-dirs:         app
     dependencies:
-    - day1
+    - D1
     - optparse-simple
 
     ghc-options:
@@ -52,11 +52,11 @@ executables:
     - -with-rtsopts=-N
 
 tests:
-  day1-test:
+  D1-test:
     main:                Spec.hs
     source-dirs:         test
     dependencies:
-    - day1
+    - D1
     - hspec
 
     ghc-options:
