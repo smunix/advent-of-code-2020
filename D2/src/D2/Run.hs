@@ -83,8 +83,7 @@ solve1 :: [] Entry -> RIO App Int
 solve1 entries = do
   logInfo . fromString . show $ entries
   entries
-    <&> isValid
-    & catMaybes
+    & mapMaybe isValid
     & length
     & pure
   where
@@ -94,7 +93,7 @@ solve1 entries = do
         then Just e
         else Nothing
       where
-        c = count char password & fromIntegral
+        c = count char password
 
 {-
 our puzzle answer was 622.
@@ -125,16 +124,12 @@ solve2 :: [] Entry -> RIO App Int
 solve2 entries = do
   logInfo . fromString . show $ entries
   entries
-    <&> isValid
-    & catMaybes
+    & mapMaybe isValid
     & length
     & pure
   where
     isValid :: Entry -> Maybe Entry
-    isValid e@Entry {..} = case (check low, check high) of
-      (True, False) -> pure e
-      (False, True) -> pure e
-      _ -> Nothing
+    isValid e@Entry {..} = guard (on (/=) check low high) >> pure e
       where
         check = (char ==) . index password . flip (-) 1
 
