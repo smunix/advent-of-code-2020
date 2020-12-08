@@ -10,6 +10,8 @@
 
 module D1.Run
   ( run,
+    solve1,
+    solve2,
   )
 where
 
@@ -49,11 +51,11 @@ Of course, your expense report is much larger. Find the two entries that sum to 
 Your puzzle answer was 55776.
 -}
 
-solve :: [] Int -> [] ((Int, Int), Int)
-solve xs = do
+solve1 :: Int -> [] Int -> Maybe ((Int, Int), Int)
+solve1 total xs = listToMaybe do
   x : ys <- tails xs
   y <- ys
-  guard $ 2020 == x + y
+  guard $ total == x + y
   pure ((x, y), x * y)
 
 {-
@@ -69,12 +71,12 @@ Your puzzle answer was 223162626.
 
 -}
 
-solve' :: [] Int -> [] ((Int, Int, Int), Int)
-solve' xs = do
+solve2 :: Int -> [] Int -> Maybe ((Int, Int, Int), Int)
+solve2 total xs = listToMaybe do
   x : ys <- tails xs
   y : zs <- tails ys
   z <- zs
-  guard $ 2020 == x + y + z
+  guard $ total == x + y + z
   pure ((x, y, z), x * y * z)
 
 run :: RIO App ()
@@ -88,8 +90,10 @@ run = do
           675,
           1456
         ]
-  logDebug . fromString $ ("part 1: " <> (show $ solve test))
+      total :: Int
+      total = 2020
+  logInfo . fromString $ ("part 1: " <> (show $ solve1 total test))
   withFile "D1/assets/inputs.txt" ReadMode \h -> do
     contents <- hGetContents h
     let ints = contents & words <&> readInt & catMaybes <&> fst
-    logDebug . fromString $ ("part 2: " <> (show $ solve' ints))
+    logInfo . fromString $ ("part 2: " <> (show $ solve2 total ints))
