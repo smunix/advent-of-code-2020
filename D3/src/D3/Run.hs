@@ -22,8 +22,6 @@ import Data.Array (Array)
 import qualified Data.Array as Array
 import qualified Data.ByteString.Lazy.Char8 as ByteString
 import qualified Data.Maybe as Maybe
-import qualified Data.Strings as Strings
--- import qualified Debug.Trace as Debug
 import RIO.ByteString.Lazy (hGetContents)
 
 {- https://adventofcode.com/2020/day/3 -}
@@ -209,9 +207,6 @@ run = do
         grid :: Maybe (Array (Int64, Int64) Char)
         grid = size <&> flip Array.listArray (lines' <&> ByteString.unpack & join) . (startPos,)
 
-    logInfo . fromString . Strings.sToString $ contents
-    logInfo . fromString . show $ size
-
     let part1 = solve . flip slopeFn (1, 3)
 
         part2 = \arr ->
@@ -226,8 +221,9 @@ run = do
             <&> Maybe.catMaybes
             <&> Just . product
 
-    rs <- grid & maybe (return (Nothing, Nothing)) (\arr -> (,) <$> part1 arr <*> part2 arr)
-    logInfo . fromString . show $ rs
+    grid
+      & maybe (return (Nothing, Nothing)) (\arr -> (,) <$> part1 arr <*> part2 arr)
+      >>= logInfo . fromString . show
   where
     -- fp = "D3/assets/test1.txt"
     fp = "D3/assets/part1.txt"
@@ -237,12 +233,18 @@ solve ::
   RIO App (Maybe Int)
 solve stepFn =
   loop
+    False
     Step
       { stepCount = 0,
         stepPos = startPos
       }
   where
-    loop :: Step -> RIO App (Maybe Int)
-    loop s@Step {..}
-      | Just s' <- stepFn s = loop s'
-      | otherwise = return $ Just stepCount
+    loop ::
+      Bool ->
+      Step ->
+      RIO App (Maybe Int)
+    loop b s@Step {..} =
+      if
+          | (False, Nothing) <- (b, stepFn s) -> return Nothing
+          | (_, Just s') <- (b, stepFn s) -> loop True s'
+          | otherwise -> return $ Just stepCount
