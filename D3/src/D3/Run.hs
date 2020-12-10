@@ -194,28 +194,38 @@ run = do
     contents <- hGetContents h
     let lines' :: [] ByteString.ByteString
         lines' = contents & ByteString.lines
+
         size ::
           -- | (height, width)
           Maybe (Int64, Int64)
-        size =
-          Maybe.listToMaybe lines'
-            <&> ByteString.length
-            <&> (lines' & length & fromIntegral,)
+        size = (,) <$> ht lines' <*> wt lines'
+
+        ht :: [] ByteString.ByteString -> Maybe Int64
+        ht = pure . fromIntegral . length
+
+        wt :: [] ByteString.ByteString -> Maybe Int64
+        wt = (ByteString.length <$>) . Maybe.listToMaybe
+
         grid :: Maybe (Array (Int64, Int64) Char)
-        grid =
-          size
-            <&> \bounds ->
-              (lines' <&> ByteString.unpack & join)
-                & Array.listArray (startPos, bounds)
+        grid = size <&> flip Array.listArray (lines' <&> ByteString.unpack & join) . (startPos,)
+
     logInfo . fromString . Strings.sToString $ contents
     logInfo . fromString . show $ size
+
     let part1 = solve . flip slopeFn (1, 3)
+
         part2 = \arr ->
-          [(1, 1), (1, 3), (1, 5), (1, 7), (2, 1)]
+          [ (1, 1),
+            (1, 3),
+            (1, 5),
+            (1, 7),
+            (2, 1)
+          ]
             <&> (solve . slopeFn arr)
             & sequence
             <&> Maybe.catMaybes
             <&> Just . product
+
     rs <- grid & maybe (return (Nothing, Nothing)) (\arr -> (,) <$> part1 arr <*> part2 arr)
     logInfo . fromString . show $ rs
   where
