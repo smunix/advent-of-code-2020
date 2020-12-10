@@ -24,6 +24,18 @@ cradle:
     - path: "D2/test"
       component: "D2:test:D2-test"
 
+    - path: "D3/src"
+      component: "lib:D3"
+
+    - path: "D3/app/Main.hs"
+      component: "D3:exe:D3-exe"
+
+    - path: "D3/app/Paths_D3.hs"
+      component: "D3:exe:D3-exe"
+
+    - path: "D3/test"
+      component: "D3:test:D3-test"
+
     - path: "d1b/src"
       component: "lib:d1b"
 
