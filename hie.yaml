@@ -36,6 +36,18 @@ cradle:
     - path: "D3/test"
       component: "D3:test:D3-test"
 
+    - path: "D4/src"
+      component: "lib:D4"
+
+    - path: "D4/app/Main.hs"
+      component: "D4:exe:D4-exe"
+
+    - path: "D4/app/Paths_D4.hs"
+      component: "D4:exe:D4-exe"
+
+    - path: "D4/test"
+      component: "D4:test:D4-test"
+
     - path: "d1b/src"
       component: "lib:d1b"
 

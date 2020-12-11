@@ -1,0 +1,71 @@
+name:                D4
+version:             0.1.0.0
+github:              smunix/D4
+license:             BSD4
+author:              Providence Salumu
+maintainer:          Providence.Salumu@smunix.com
+copyright:           BSD4
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on Github at <https://github.com/smunix/D4#readme>
+
+dependencies:
+- base >= 4.11
+- rio >= 0.1.12.0
+- array
+- utils
+- monad-extras
+- text
+- bytestring
+- megaparsec
+- parser-combinators
+- strings
+- data-default
+
+ghc-options:
+- -Wall
+- -Wcompat
+- -Widentities
+- -Wincomplete-record-updates
+- -Wincomplete-uni-patterns
+- -Wpartial-fields
+- -Wredundant-constraints
+
+library:
+  source-dirs: src
+
+executables:
+  D4-exe:
+    main:                Main.hs
+    source-dirs:         app
+    dependencies:
+    - D4
+    - optparse-simple
+
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+
+tests:
+  D4-test:
+    main:                Spec.hs
+    source-dirs:         test
+    dependencies:
+    - D4
+    - hspec
+
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
