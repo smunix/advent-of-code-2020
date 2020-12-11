@@ -25,10 +25,12 @@ import qualified Control.Monad.Combinators as ParserComb
 import D4.Import hiding (words)
 import qualified Data.ByteString.Lazy as ByteStringW
 import qualified Data.ByteString.Lazy.Char8 as ByteStringC
+import qualified Data.Char as Char
 import Data.Default
 import qualified Data.List as List
 import qualified Data.Maybe as Maybe
 import qualified Data.Strings as Strings
+import qualified Debug.Trace as Debug
 import RIO.ByteString.Lazy (hGetContents)
 import qualified Text.Megaparsec as MegaP
 import qualified Text.Megaparsec.Byte as MegaPB
@@ -103,7 +105,7 @@ cid as optional. In your batch file, how many passports are valid?
 
 To begin, get your puzzle input.
 
-Answer:
+Answer: 226
 
 -}
 
@@ -133,14 +135,104 @@ data Passport m where
     } ->
     Passport m
 
-class IsValid m where
-  isValid :: Passport m -> Bool
+class IsValid1 m where
+  isValid1 :: Passport m -> Bool
 
-instance IsValid Maybe where
-  isValid Passport {..} =
+instance IsValid1 Maybe where
+  isValid1 Passport {..} =
     if
         | (Just _, Just _, Just _, Just _, Just _, Just _, Just _, _) <- (byr, iyr, eyr, hgt, hcl, ecl, pid, cid) -> True
         | otherwise -> False
+
+class (IsValid1 m) => IsValid2 m where
+  isValid2 :: Passport m -> Bool
+
+instance IsValid2 Maybe where
+  isValid2 Passport {..} =
+    if
+        | ( Just (Byr byr'),
+            Just (Iyr iyr'),
+            Just (Eyr eyr'),
+            Just (Hgt hgt'),
+            Just (Hcl hcl'),
+            Just (Ecl ecl'),
+            Just (Pid pid'),
+            _
+            ) <-
+            ( byr,
+              iyr,
+              eyr,
+              hgt,
+              hcl,
+              ecl,
+              pid,
+              cid
+            ) ->
+          and
+            [ byr' `interval` (1920, 2002),
+              iyr' `interval` (2010, 2020),
+              eyr' `interval` (2020, 2030),
+              hgt' & validHeight,
+              hcl' & validHairColor,
+              ecl' & validEyeColor,
+              pid' & validPid
+            ]
+        | otherwise -> False
+
+validPid :: LByteString -> Bool
+validPid = fromRight False . MegaP.runParser parser "pid"
+  where
+    parser :: MegaP.Parsec () LByteString Bool
+    parser = ParserComb.count 9 MegaPB.digitChar $> True
+
+validEyeColor :: LByteString -> Bool
+validEyeColor = fromRight False . MegaP.runParser parser "ecl"
+  where
+    parser :: MegaP.Parsec () LByteString Bool
+    parser =
+      ParserComb.choice
+        [ "amb",
+          "blu",
+          "brn",
+          "gry",
+          "grn",
+          "hzl",
+          "oth"
+        ]
+        $> True
+
+validHairColor :: LByteString -> Bool
+validHairColor = fromRight False . MegaP.runParser parser "hcl"
+  where
+    parser :: MegaP.Parsec () LByteString Bool
+    parser =
+      ('#' & Char.ord & fromIntegral & MegaPB.char)
+        *> ParserComb.count 6 MegaPB.hexDigitChar
+        $> True
+
+validHeight :: LByteString -> Bool
+validHeight = fromRight False . MegaP.runParser parser "hgt"
+  where
+    parser :: MegaP.Parsec () LByteString Bool
+    parser =
+      (MegaPBL.decimal :: MegaP.Parsec () LByteString Int64)
+        <&> ( \v ->
+                ParserComb.choice ["cm", "in"]
+                  <&> \case
+                    "cm" -> 150 <= v && v <= 193
+                    "in" -> 59 <= v && v <= 76
+                    _ -> False
+            )
+        & join
+
+interval :: LByteString -> (Int64, Int64) -> Bool
+interval x (l, h) = let r = fromRight False . MegaP.runParser parser "int" $ x in r
+  where
+    parser :: MegaP.Parsec () LByteString Bool
+    parser =
+      ParserComb.count 4 MegaPB.digitChar
+        <&> MegaP.runParser (MegaPBL.decimal :: MegaP.Parsec () [Word8] Int64) "ints"
+        <&> either (const False) (uncurry (&&) . ((l <=) &&& (<= h)))
 
 deriving stock instance (Show (m Field)) => Show (Passport m)
 
@@ -272,11 +364,11 @@ Answer:
 -- 'Passport' field descriptor
 data Field where
   -- | Birth Year
-  Byr :: Int64 -> Field
+  Byr :: LByteString -> Field
   -- | Issue Year
-  Iyr :: Int64 -> Field
+  Iyr :: LByteString -> Field
   -- | Expiry Year
-  Eyr :: Int64 -> Field
+  Eyr :: LByteString -> Field
   -- | Height
   Hgt :: LByteString -> Field
   -- | Hair Color
@@ -311,13 +403,13 @@ isTag tag psr = do
   psr
 
 byrP :: MegaP.ParsecT () LByteString m Field
-byrP = isTag "byr" (MegaPBL.decimal <* MegaPB.space <&> Byr)
+byrP = isTag "byr" ((many MegaPB.digitChar <* MegaPB.space) <&> Byr . ByteStringW.pack)
 
 iyrP :: MegaP.ParsecT () LByteString m Field
-iyrP = isTag "iyr" (MegaPBL.decimal <* MegaPB.space <&> Iyr)
+iyrP = isTag "iyr" ((many MegaPB.digitChar <* MegaPB.space) <&> Iyr . ByteStringW.pack)
 
 eyrP :: MegaP.ParsecT () LByteString m Field
-eyrP = isTag "eyr" (MegaPBL.decimal <* MegaPB.space <&> Eyr)
+eyrP = isTag "eyr" ((many MegaPB.digitChar <* MegaPB.space) <&> Eyr . ByteStringW.pack)
 
 hgtP :: MegaP.ParsecT () LByteString m Field
 hgtP = isTag "hgt" ((many MegaPB.alphaNumChar <* MegaPB.space) <&> Hgt . ByteStringW.pack)
@@ -384,32 +476,37 @@ passports xs = do
 
 run :: RIO App ()
 run = do
-  withFile fp ReadMode \fd -> do
-    contents <- hGetContents fd
-    contents
-      & logInfo . fromString . Strings.sToString
-    let lines' :: [] ([] LByteString)
-        lines' =
-          contents
-            & ByteStringC.lines
-            & List.groupBy onePassport
-            & List.filter (/= [""])
-            <&> join . (<&> ByteStringC.words)
-
-        allPassports :: RIO App ([] (Passport Maybe))
-        allPassports = passports @[] @(RIO App) lines' <&> fmap hoist
-
-    lines'
-      & logInfo . fromString . show
-
-    allPassports
-      >>= logInfo . fromString . show
-
-    allPassports
-      <&> length . filter (== True) . fmap isValid
-      >>= logInfo . fromString . show
+  testFile "D4/assets/test-invalid-2.txt"
+  testFile "D4/assets/test-valid-2.txt"
+  testFile "D4/assets/input.txt"
   where
-    fp = "D4/assets/input.txt"
+    testFile :: FilePath -> RIO App ()
+    testFile fp = withFile fp ReadMode \fd -> do
+      contents <- hGetContents fd
+      let lines' :: [] ([] LByteString)
+          lines' =
+            contents
+              & ByteStringC.lines
+              & List.groupBy onePassport
+              & List.filter (/= [""])
+              <&> join . (<&> ByteStringC.words)
+
+          allPassports :: RIO App ([] (Passport Maybe))
+          allPassports = passports @[] @(RIO App) lines' <&> fmap hoist
+
+      -- lines'
+      --   & logInfo . fromString . show
+
+      -- allPassports
+      --   >>= logInfo . fromString . show
+
+      allPassports
+        <&> length . filter (== True) . fmap isValid1 &&& length . filter (== True) . fmap (\x -> if isValid2 x then Debug.traceShow (x, True) True else False)
+        >>= \r -> do
+          logInfo $ fromString fp
+          logInfo $ fromString $ Strings.sToString contents
+          logInfo $ fromString $ show (fp, r)
+
     onePassport :: LByteString -> LByteString -> Bool
     onePassport a b =
       if
