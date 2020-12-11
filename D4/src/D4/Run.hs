@@ -369,14 +369,12 @@ passports (List.null -> True) = return mempty
 passports xs = do
   xs
     <&> ( \ps ->
-            [ ( do
-                  r <- MegaP.runParserT (passportP @m') fp f
-                  case r of
-                    Left _ -> return mempty
-                    Right p' -> return p'
-              )
-              | f <- ps
-            ]
+            ps
+              <&> ( MegaP.runParserT (passportP @m') fp
+                      >=> \case
+                        Left _ -> return mempty
+                        Right p' -> return p'
+                  )
               & sequence
               <&> foldl' (<>) mempty
         )
