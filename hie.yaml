@@ -60,6 +60,18 @@ cradle:
     - path: "D5/test"
       component: "D5:test:D5-test"
 
+    - path: "D6/src"
+      component: "lib:D6"
+
+    - path: "D6/app/Main.hs"
+      component: "D6:exe:D6-exe"
+
+    - path: "D6/app/Paths_D6.hs"
+      component: "D6:exe:D6-exe"
+
+    - path: "D6/test"
+      component: "D6:test:D6-test"
+
     - path: "d1b/src"
       component: "lib:d1b"
 

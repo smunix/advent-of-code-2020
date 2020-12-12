@@ -1,0 +1,100 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.34.1.
+--
+-- see: https://github.com/sol/hpack
+
+name:           D6
+version:        0.1.0.0
+description:    Please see the README on Github at <https://github.com/smunix/D6#readme>
+homepage:       https://github.com/smunix/D6#readme
+bug-reports:    https://github.com/smunix/D6/issues
+author:         Providence Salumu
+maintainer:     Providence.Salumu@smunix.com
+copyright:      BSD6
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+
+source-repository head
+  type: git
+  location: https://github.com/smunix/D6
+
+library
+  exposed-modules:
+      D6.Import
+      D6.Run
+      D6.Types
+      D6.Util
+  other-modules:
+      Paths_D6
+  hs-source-dirs:
+      src
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints
+  build-depends:
+      array
+    , base >=4.11
+    , bytestring
+    , data-default
+    , megaparsec
+    , monad-extras
+    , parser-combinators
+    , rio >=0.1.12.0
+    , strings
+    , text
+    , unordered-containers
+    , utils
+  default-language: Haskell2010
+
+executable D6-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_D6
+  hs-source-dirs:
+      app
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      D6
+    , array
+    , base >=4.11
+    , bytestring
+    , data-default
+    , megaparsec
+    , monad-extras
+    , optparse-simple
+    , parser-combinators
+    , rio >=0.1.12.0
+    , strings
+    , text
+    , unordered-containers
+    , utils
+  default-language: Haskell2010
+
+test-suite D6-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      UtilSpec
+      Paths_D6
+  hs-source-dirs:
+      test
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      D6
+    , array
+    , base >=4.11
+    , bytestring
+    , data-default
+    , hspec
+    , megaparsec
+    , monad-extras
+    , parser-combinators
+    , rio >=0.1.12.0
+    , strings
+    , text
+    , unordered-containers
+    , utils
+  default-language: Haskell2010
