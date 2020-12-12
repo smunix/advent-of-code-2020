@@ -1,9 +1,13 @@
+{-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE BlockArguments #-}
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DerivingStrategies #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GADTs #-}
+{-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE MultiWayIf #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RankNTypes #-}
@@ -25,12 +29,12 @@ import qualified Control.Monad.Combinators as ParserComb
 import D4.Import hiding (words)
 import qualified Data.ByteString.Lazy as ByteStringW
 import qualified Data.ByteString.Lazy.Char8 as ByteStringC
-import qualified Data.Char as Char
 import Data.Default
 import qualified Data.List as List
 import qualified Data.Maybe as Maybe
 import qualified Data.Strings as Strings
 import qualified Debug.Trace as Debug
+import qualified GHC.TypeLits as Ghc
 import RIO.ByteString.Lazy (hGetContents)
 import qualified Text.Megaparsec as MegaP
 import qualified Text.Megaparsec.Byte as MegaPB
@@ -169,9 +173,9 @@ instance IsValid2 Maybe where
               cid
             ) ->
           and
-            [ byr' `interval` (1920, 2002),
-              iyr' `interval` (2010, 2020),
-              eyr' `interval` (2020, 2030),
+            [ interval (1920, 2002) byr',
+              interval (2010, 2020) iyr',
+              interval (2020, 2030) eyr',
               hgt' & validHeight,
               hcl' & validHairColor,
               ecl' & validEyeColor,
@@ -206,7 +210,7 @@ validHairColor = fromRight False . MegaP.runParser parser "hcl"
   where
     parser :: MegaP.Parsec () LByteString Bool
     parser =
-      ('#' & Char.ord & fromIntegral & MegaPB.char)
+      "#"
         *> ParserComb.count 6 MegaPB.hexDigitChar
         $> True
 
@@ -225,8 +229,11 @@ validHeight = fromRight False . MegaP.runParser parser "hgt"
             )
         & join
 
-interval :: LByteString -> (Int64, Int64) -> Bool
-interval x (l, h) = let r = fromRight False . MegaP.runParser parser "int" $ x in r
+interval ::
+  (Int64, Int64) ->
+  LByteString ->
+  Bool
+interval (l, h) = fromRight False . MegaP.runParser parser "int"
   where
     parser :: MegaP.Parsec () LByteString Bool
     parser =
@@ -384,47 +391,40 @@ data Field where
 fieldP :: MegaP.ParsecT () LByteString m Field
 fieldP =
   ParserComb.choice
-    [ byrP,
-      iyrP,
-      eyrP,
-      hgtP,
-      hclP,
-      eclP,
-      pidP,
-      cidP
+    [ tag @"byr" MegaPB.digitChar,
+      tag @"iyr" MegaPB.digitChar,
+      tag @"eyr" MegaPB.digitChar,
+      tag @"hgt" MegaPB.asciiChar,
+      tag @"hcl" MegaPB.asciiChar,
+      tag @"ecl" MegaPB.asciiChar,
+      tag @"pid" MegaPB.digitChar,
+      tag @"cid" MegaPB.digitChar
     ]
 
-isTag ::
-  LByteString ->
-  MegaP.ParsecT () LByteString m Field ->
-  MegaP.ParsecT () LByteString m Field
-isTag tag psr = do
-  _ <- MegaPB.string (ByteStringC.append tag ":")
-  psr
+class (Ghc.KnownSymbol s) => Tag s where
+  tagCtor :: LByteString -> Field
 
-byrP :: MegaP.ParsecT () LByteString m Field
-byrP = isTag "byr" ((many MegaPB.digitChar <* MegaPB.space) <&> Byr . ByteStringW.pack)
+  tagTxt :: LByteString
+  tagTxt = Ghc.symbolVal (Proxy @s) & ByteStringC.pack
 
-iyrP :: MegaP.ParsecT () LByteString m Field
-iyrP = isTag "iyr" ((many MegaPB.digitChar <* MegaPB.space) <&> Iyr . ByteStringW.pack)
+  tag :: MegaP.ParsecT () LByteString m Word8 -> MegaP.ParsecT () LByteString m Field
+  tag c = MegaPB.string (ByteStringC.append (tagTxt @s) ":") >> (many c <* MegaPB.space) <&> (tagCtor @s) . ByteStringW.pack
 
-eyrP :: MegaP.ParsecT () LByteString m Field
-eyrP = isTag "eyr" ((many MegaPB.digitChar <* MegaPB.space) <&> Eyr . ByteStringW.pack)
+instance Tag "byr" where tagCtor = Byr
 
-hgtP :: MegaP.ParsecT () LByteString m Field
-hgtP = isTag "hgt" ((many MegaPB.alphaNumChar <* MegaPB.space) <&> Hgt . ByteStringW.pack)
+instance Tag "iyr" where tagCtor = Iyr
 
-hclP :: MegaP.ParsecT () LByteString m Field
-hclP = isTag "hcl" ((many MegaPB.asciiChar <* MegaPB.space) <&> Hcl . ByteStringW.pack)
+instance Tag "eyr" where tagCtor = Eyr
 
-eclP :: MegaP.ParsecT () LByteString m Field
-eclP = isTag "ecl" ((many MegaPB.asciiChar <* MegaPB.space) <&> Ecl . ByteStringW.pack)
+instance Tag "hgt" where tagCtor = Hgt
 
-pidP :: MegaP.ParsecT () LByteString m Field
-pidP = isTag "pid" (many (MegaPB.asciiChar <* MegaPB.space) <&> Pid . ByteStringW.pack)
+instance Tag "hcl" where tagCtor = Hcl
 
-cidP :: MegaP.ParsecT () LByteString m Field
-cidP = isTag "cid" (many (MegaPB.asciiChar <* MegaPB.space) <&> Cid . ByteStringW.pack)
+instance Tag "ecl" where tagCtor = Ecl
+
+instance Tag "pid" where tagCtor = Pid
+
+instance Tag "cid" where tagCtor = Cid
 
 fieldsP :: MegaP.ParsecT () LByteString m ([] Field)
 fieldsP = many fieldP
@@ -463,12 +463,10 @@ passports xs = do
     <&> ( \ps ->
             ps
               <&> ( MegaP.runParserT (passportP @m') fp
-                      >=> \case
-                        Left _ -> return mempty
-                        Right p' -> return p'
+                      >=> return . either (const mempty) id
                   )
               & sequence
-              <&> foldl' (<>) mempty
+              <&> fold
         )
     & sequence
   where
