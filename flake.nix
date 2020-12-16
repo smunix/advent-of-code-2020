@@ -23,6 +23,9 @@
       D7 = haskellPackages.callCabal2nix "D7" ./D7 {
         inherit (self.packages.x86_64-linux) utils;
       };
+      D8 = haskellPackages.callCabal2nix "D8" ./D8 {
+        inherit (self.packages.x86_64-linux) utils;
+      };
       utils = haskellPackages.callCabal2nix "utils" ./utils {};
       d1b = haskellPackages.callPackage ./d1b/d1b.nix {
         version = ''${self.rev or self.lastModifiedDate}'';

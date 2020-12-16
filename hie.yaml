@@ -84,6 +84,18 @@ cradle:
     - path: "D7/test"
       component: "D7:test:D7-test"
 
+    - path: "D8/src"
+      component: "lib:D8"
+
+    - path: "D8/app/Main.hs"
+      component: "D8:exe:D8-exe"
+
+    - path: "D8/app/Paths_D8.hs"
+      component: "D8:exe:D8-exe"
+
+    - path: "D8/test"
+      component: "D8:test:D8-test"
+
     - path: "d1b/src"
       component: "lib:d1b"
 
